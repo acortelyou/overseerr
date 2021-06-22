@@ -52,6 +52,11 @@ const messages = defineMessages({
   trustProxy: 'Enable Proxy Support',
   trustProxyTip:
     'Allow Overseerr to correctly register client IP addresses behind a proxy (Overseerr must be reloaded for changes to take effect)',
+  authProxyHeader: 'Proxy Auth Header',
+  authProxyHeaderTip:
+    'Allow Overseerr to authenticate clients via the given HTTP header (Overseerr must trust proxy for header to take effect)',
+  authProxyHeaderHoverTip:
+    'Do NOT enable this setting unless you understand what you are doing!',
   validationApplicationTitle: 'You must provide an application title',
   validationApplicationUrl: 'You must provide a valid URL',
   validationApplicationUrlTrailingSlash: 'URL must not end in a trailing slash',
@@ -138,6 +143,7 @@ const SettingsMain: React.FC = () => {
             originalLanguage: data?.originalLanguage,
             partialRequestsEnabled: data?.partialRequestsEnabled,
             trustProxy: data?.trustProxy,
+            authProxyHeader: data?.authProxyHeader,
           }}
           enableReinitialize
           validationSchema={MainSettingsSchema}
@@ -153,6 +159,7 @@ const SettingsMain: React.FC = () => {
                 originalLanguage: values.originalLanguage,
                 partialRequestsEnabled: values.partialRequestsEnabled,
                 trustProxy: values.trustProxy,
+                authProxyHeader: values.authProxyHeader,
               });
               mutate('/api/v1/settings/public');
 
@@ -273,6 +280,31 @@ const SettingsMain: React.FC = () => {
                   </div>
                 </div>
                 <div className="form-row">
+                  <label htmlFor="authProxyHeader" className="checkbox-label">
+                    <span className="mr-2">
+                      {intl.formatMessage(messages.authProxyHeader)}
+                    </span>
+                    <Badge badgeType="danger">
+                      {intl.formatMessage(globalMessages.advanced)}
+                    </Badge>
+                    <span className="label-tip">
+                      {intl.formatMessage(messages.authProxyHeaderTip)}
+                    </span>
+                  </label>
+                  <div className="form-input">
+                    <div className="form-input-field">
+                      <Field
+                        type="text"
+                        id="authProxyHeader"
+                        name="authProxyHeader"
+                        title={intl.formatMessage(
+                          messages.authProxyHeaderHoverTip
+                        )}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="form-row">
                   <label htmlFor="csrfProtection" className="checkbox-label">
                     <span className="mr-2">
                       {intl.formatMessage(messages.csrfProtection)}
@@ -305,11 +337,9 @@ const SettingsMain: React.FC = () => {
                   <div className="form-input">
                     <div className="form-input-field">
                       <Field as="select" id="locale" name="locale">
-                        {(
-                          Object.keys(
-                            availableLanguages
-                          ) as (keyof typeof availableLanguages)[]
-                        ).map((key) => (
+                        {(Object.keys(
+                          availableLanguages
+                        ) as (keyof typeof availableLanguages)[]).map((key) => (
                           <option
                             key={key}
                             value={availableLanguages[key].code}

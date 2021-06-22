@@ -88,6 +88,7 @@ export interface MainSettings {
   region: string;
   originalLanguage: string;
   trustProxy: boolean;
+  authProxyHeader: string;
   partialRequestsEnabled: boolean;
   locale: string;
 }
@@ -254,6 +255,7 @@ class Settings {
         region: '',
         originalLanguage: '',
         trustProxy: false,
+        authProxyHeader: '',
         partialRequestsEnabled: true,
         locale: 'en',
       },

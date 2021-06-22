@@ -18,6 +18,15 @@ export const checkUser: Middleware = async (req, _res, next) => {
     }
 
     user = await userRepository.findOne({ where: { id: userId } });
+  } else if (
+    settings.main.trustProxy &&
+    req.header(settings.main.authProxyHeader)
+  ) {
+    const userRepository = getRepository(User);
+
+    user = await userRepository.findOne({
+      where: { username: req.header(settings.main.authProxyHeader) },
+    });
   } else if (req.session?.userId) {
     const userRepository = getRepository(User);
 
